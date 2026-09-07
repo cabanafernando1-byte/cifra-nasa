@@ -81,14 +81,13 @@ const INDICES_NOTAS: Record<string, number> = { "C": 0, "C#": 1, "Db": 1, "D": 2
 
 function transposeChord(chord: string, steps: number, notation: 'america' | 'latina'): string {
   if (!chord) return chord;
-  const transposed = chord.replace(/([A-G][#b]?)/g, (root) => {
+  return chord.replace(/([A-G][#b]?)/g, (root) => {
     const normalized = FLAT_TO_SHARP[root] || root;
     const index = NOTES.indexOf(normalized);
     if (index === -1) return root;
     const nuevoIndex = (index + steps + 144) % 12;
     return notation === 'latina' ? LATIN_NOTES[nuevoIndex] : NOTES[nuevoIndex];
   });
-  return transposed;
 }
 
 function calcularDiagramaAcorde(nombreAcorde: string) {
@@ -122,6 +121,8 @@ function calcularDiagramaAcorde(nombreAcorde: string) {
     "C7": { frets: [-1, 3, 2, 3, 1, -1] },
     "A7": { frets: [-1, 0, 2, 0, 2, 0] },
     "B7": { frets: [-1, 2, 1, 2, 0, 2] },
+    "A7M": { frets: [-1, 0, 2, 1, 2, 0] },
+    "E/G#": { frets: [4, -1, 2, 4, 5, -1] },
   };
 
   if (basicos[limpio]) return basicos[limpio];
@@ -187,47 +188,38 @@ function RenderLineaChordPro({ linea, semitonos, tema, fontSizeAcordes, fontSize
   if (esSeccion) {
     return <div style={{ marginTop: '20px', marginBottom: '6px', fontWeight: '800', fontSize: '0.8em', color: tema.muted, letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: "'Lexend', sans-serif" }}>{lineaTrim}</div>;
   }
-  const palabras = linea.split(/(\s+)/);
+
+  // Parse exact tokens [acorde]texto
+  const partes: { acorde: string | null; texto: string }[] = [];
+  const regex = /\[([^\]]+)\]([^[]*)/g;
+  let match;
+  let ultimoIndice = 0;
+
+  // Check if line starts with text before any bracket
+  const primerMatchIndex = linea.indexOf('[');
+  if (primerMatchIndex > 0) {
+    partes.push({ acorde: null, texto: linea.slice(0, primerMatchIndex) });
+    ultimoIndice = primerMatchIndex;
+  } else if (primerMatchIndex === -1) {
+    partes.push({ acorde: null, texto: linea });
+  }
+
+  while ((match = regex.exec(linea)) !== null) {
+    partes.push({ acorde: match[1].trim(), texto: match[2] });
+  }
+
   return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', minHeight: '36px', margin: '1px 0' }}>
-      {palabras.map((palabra, pIdx) => {
-        if (/^\s+$/.test(palabra)) return <span key={pIdx} style={{ whiteSpace: 'pre' }}>{palabra}</span>;
-        const fragmentos = palabra.split(/(\[[^\]]+\])/g);
-        let ultimoAcorde: string | null = null;
-        return (
-          <span key={pIdx} style={{ display: 'inline-flex', alignItems: 'flex-end' }}>
-            {fragmentos.map((frag, fIdx) => {
-              if (frag.startsWith('[') && frag.endsWith(']')) {
-                ultimoAcorde = frag.slice(1, -1);
-                return null;
-              }
-              const textoSilaba = frag;
-              const acordeActual = ultimoAcorde;
-              ultimoAcorde = null;
-              if (acordeActual) {
-                return (
-                  <span key={fIdx} style={{ display: 'inline-flex', flexDirection: 'column', verticalAlign: 'bottom' }}>
-                    <span style={{ fontSize: `${fontSizeAcordes}px`, fontWeight: '800', color: colorAcordes, lineHeight: '1.2', fontFamily: "'Lexend', sans-serif" }}>{transposeChord(acordeActual, semitonos, notacion)}</span>
-                    <span style={{ fontSize: `${fontSizeLetra}px`, lineHeight: '1.25', color: tema.text, fontFamily: "'Lexend', sans-serif" }}>{textoSilaba || '\u00A0'}</span>
-                  </span>
-                );
-              }
-              return (
-                <span key={fIdx} style={{ display: 'inline-flex', flexDirection: 'column', verticalAlign: 'bottom' }}>
-                  <span style={{ fontSize: `${fontSizeAcordes}px`, lineHeight: '1.2', visibility: 'hidden', fontFamily: "'Lexend', sans-serif" }}>.</span>
-                  <span style={{ fontSize: `${fontSizeLetra}px`, lineHeight: '1.25', color: tema.text, fontFamily: "'Lexend', sans-serif" }}>{textoSilaba}</span>
-                </span>
-              );
-            })}
-            {ultimoAcorde && (
-              <span style={{ display: 'inline-flex', flexDirection: 'column', verticalAlign: 'bottom' }}>
-                <span style={{ fontSize: `${fontSizeAcordes}px`, fontWeight: '800', color: colorAcordes, lineHeight: '1.2', fontFamily: "'Lexend', sans-serif" }}>{transposeChord(ultimoAcorde, semitonos, notacion)}</span>
-                <span style={{ fontSize: `${fontSizeLetra}px`, lineHeight: '1.25', fontFamily: "'Lexend', sans-serif" }}>&nbsp;</span>
-              </span>
-            )}
+    <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', minHeight: '36px', margin: '2px 0' }}>
+      {partes.map((p, idx) => (
+        <span key={idx} style={{ display: 'inline-flex', flexDirection: 'column', verticalAlign: 'bottom', marginRight: p.texto && !p.acorde ? '0px' : '2px' }}>
+          <span style={{ fontSize: `${fontSizeAcordes}px`, fontWeight: '800', color: colorAcordes, lineHeight: '1.2', fontFamily: "'Lexend', sans-serif", visibility: p.acorde ? 'visible' : 'hidden' }}>
+            {p.acorde ? transposeChord(p.acorde, semitonos, notacion) : '.'}
           </span>
-        );
-      })}
+          <span style={{ fontSize: `${fontSizeLetra}px`, lineHeight: '1.25', color: tema.text, fontFamily: "'Lexend', sans-serif", whiteSpace: 'pre' }}>
+            {p.texto || '\u00A0'}
+          </span>
+        </span>
+      ))}
     </div>
   );
 }
