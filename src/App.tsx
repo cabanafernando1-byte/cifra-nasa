@@ -46,7 +46,7 @@ function Icon({ name, size = 18 }: { name: string; size?: number }) {
     case 'search': return <svg {...common}><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>;
     case 'moon': return <svg {...common}><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" /></svg>;
     case 'sun': return <svg {...common}><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></svg>;
-    case 'settings': return <svg {...common}><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z" /></svg>;
+    case 'settings': return <svg {...common}><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l-.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z" /></svg>;
     case 'plus': return <svg {...common} strokeWidth={2.4}><path d="M12 5v14M5 12h14" /></svg>;
     case 'stack': return <svg {...common}><path d="M4 7.5 12 4l8 3.5-8 3.5-8-3.5Z" /><path d="m4 12 8 3.5 8-3.5M4 16.5 12 20l8-3.5" /></svg>;
     case 'layers': return <svg {...common}><rect x="4" y="4" width="12" height="12" rx="2" /><path d="M8 20h10a2 2 0 0 0 2-2V8" /></svg>;
@@ -334,19 +334,17 @@ export default function App() {
     if (!scrolling || vistaActual !== 'visor') return;
     const el = scrollRef.current;
     if (!el) return;
-    let frame = 0, last = performance.now(), carry = 0;
-    const pxPerSecond = 30 * speed;
-    const tick = (now: number) => {
-      const dt = (now - last) / 1000;
-      last = now;
-      carry += pxPerSecond * dt;
-      const step = Math.floor(carry);
-      if (step > 0) { el.scrollTop += step; carry -= step; }
-      if (el.scrollTop + el.clientHeight >= el.scrollHeight - 2) { setScrolling(false); return; }
-      frame = requestAnimationFrame(tick);
+    let frameId: number;
+    const stepScroll = () => {
+      el.scrollTop += 0.8 * speed;
+      if (el.scrollTop + el.clientHeight >= el.scrollHeight - 2) {
+        setScrolling(false);
+        return;
+      }
+      frameId = requestAnimationFrame(stepScroll);
     };
-    frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
+    frameId = requestAnimationFrame(stepScroll);
+    return () => cancelAnimationFrame(frameId);
   }, [scrolling, speed, vistaActual]);
 
   const acordesDelHimno = (texto: string) => {
@@ -488,10 +486,10 @@ export default function App() {
   const listTab = tab === 'recent' ? recientes : favoritos;
 
   return (
-    <div style={{ minHeight: '100dvh', fontFamily: "'Lexend', sans-serif", backgroundColor: t.bg, color: t.text, transition: 'background 0.25s ease, color 0.25s ease', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ height: '100dvh', overflow: 'hidden', fontFamily: "'Lexend', sans-serif", backgroundColor: t.bg, color: t.text, display: 'flex', flexDirection: 'column' }}>
       <style>{`
         * { box-sizing: border-box; }
-        html, body { margin: 0; padding: 0; height: 100%; overflow: auto; }
+        html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; }
         @keyframes animFadeOut { 0% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(1.03); } }
         .cn-scroll { scrollbar-width: none; -ms-overflow-style: none; }
         .cn-scroll::-webkit-scrollbar { display: none; }
@@ -771,7 +769,7 @@ export default function App() {
             </div>
           </header>
 
-          <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '16px 20px 120px 20px', display: 'block' }} ref={scrollRef}>
+          <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', WebkitOverflowScrolling: 'touch', padding: '16px 20px 130px 20px' }} ref={scrollRef}>
             <div style={{ maxWidth: 720, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 20 }} className="contenedor-visor">
               
               <div className="header-himno-pdf">
@@ -864,7 +862,7 @@ export default function App() {
 
               <div>
                 <label style={{ fontSize: 12, fontWeight: 700, color: t.muted, display: 'block', marginBottom: 4 }}>Título</label>
-                <input type="text" required value={formTitulo} onChange={(e) => setFormTitulo(e.target.value)} placeholder="Título del canto" style={{ width: '100%', background: t.surface, color: t.text, border: `1px solid ${t.border}`, borderRadius: 10, padding: '10px 12px', fontSize: 14, fontFamily: "'Lexend', sans-serif" }} />
+                <input type="text" required value={formTitle} onChange={(e) => setFormTitulo(e.target.value)} placeholder="Título del canto" style={{ width: '100%', background: t.surface, color: t.text, border: `1px solid ${t.border}`, borderRadius: 10, padding: '10px 12px', fontSize: 14, fontFamily: "'Lexend', sans-serif" }} />
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
