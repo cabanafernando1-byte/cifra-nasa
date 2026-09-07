@@ -46,7 +46,7 @@ function Icon({ name, size = 18 }: { name: string; size?: number }) {
     case 'search': return <svg {...common}><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>;
     case 'moon': return <svg {...common}><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" /></svg>;
     case 'sun': return <svg {...common}><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></svg>;
-    case 'settings': return <svg {...common}><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z" /></svg>;
+    case 'settings': return <svg {...common}><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l-.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z" /></svg>;
     case 'plus': return <svg {...common} strokeWidth={2.4}><path d="M12 5v14M5 12h14" /></svg>;
     case 'stack': return <svg {...common}><path d="M4 7.5 12 4l8 3.5-8 3.5-8-3.5Z" /><path d="m4 12 8 3.5 8-3.5M4 16.5 12 20l8-3.5" /></svg>;
     case 'layers': return <svg {...common}><rect x="4" y="4" width="12" height="12" rx="2" /><path d="M8 20h10a2 2 0 0 0 2-2V8" /></svg>;
@@ -120,7 +120,7 @@ function DiagramaAcordeLexend({ name, tema }: { name: string; tema: any }) {
   const baseFret = shape.baseFret || 1;
 
   return (
-    <figure style={{ background: tema.surface, boxShadow: `inset 0 0 0 1px ${tema.border}`, borderRadius: '12px', width: '76px', padding: '6px 4px 8px', display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, margin: 0 }}>
+    <figure className="item-acorde-pdf" style={{ background: tema.surface, boxShadow: `inset 0 0 0 1px ${tema.border}`, borderRadius: '12px', width: '76px', padding: '6px 4px 8px', display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, margin: 0 }}>
       <figcaption style={{ fontFamily: "'Lexend', sans-serif", fontSize: '12px', fontWeight: '700', color: tema.accent, marginBottom: '2px' }}>{name}</figcaption>
       <svg viewBox={`0 0 ${W} ${H}`} width={W} height={H}>
         {baseFret === 1 ? (
@@ -237,11 +237,10 @@ export default function App() {
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // PALETA CORREGIDA: Alto contraste garantizado para modo claro y oscuro
   const t = modoOscuro ? {
-    bg: '#0b1120', surface: '#111a2e', surface2: '#16213a', border: 'rgba(255,255,255,0.08)', borderStrong: 'rgba(255,255,255,0.16)', text: '#f4f6fb', muted: '#8a94ad', faint: '#5b6480', accent: '#e07a4f', chordColor: '#38bdf8', accentSoft: 'rgba(224,122,79,0.14)', onAccent: '#1a0d07', shadow: '0 8px 24px rgba(0,0,0,0.3)',
+    bg: '#0b1120', surface: '#111a2e', surface2: '#16213a', border: 'rgba(255,255,255,0.08)', borderStrong: 'rgba(255,255,255,0.16)', text: '#f4f6fb', muted: '#94a3b8', faint: '#64748b', accent: '#e07a4f', chordColor: '#e07a4f', accentSoft: 'rgba(224,122,79,0.14)', onAccent: '#1a0d07', shadow: '0 8px 24px rgba(0,0,0,0.3)',
   } : {
-    bg: '#f8fafc', surface: '#ffffff', surface2: '#f1f5f9', border: '#cbd5e1', borderStrong: '#94a3b8', text: '#0f172a', muted: '#475569', faint: '#64748b', accent: '#d46a3f', chordColor: '#0284c7', accentSoft: 'rgba(212,106,63,0.12)', onAccent: '#ffffff', shadow: '0 4px 20px rgba(11,17,32,0.06)',
+    bg: '#f8fafc', surface: '#ffffff', surface2: '#f1f5f9', border: '#cbd5e1', borderStrong: '#94a3b8', text: '#0f172a', muted: '#334155', faint: '#475569', accent: '#d46a3f', chordColor: '#d46a3f', accentSoft: 'rgba(212,106,63,0.12)', onAccent: '#ffffff', shadow: '0 4px 20px rgba(11,17,32,0.06)',
   };
 
   const himnosIniciales = [
@@ -428,19 +427,52 @@ export default function App() {
         .cn-scroll::-webkit-scrollbar { display: none; }
         .cn-press { transition: transform 0.15s ease, opacity 0.15s ease; cursor: pointer; border: none; font-family: inherit; }
         .cn-press:active { transform: scale(0.97); }
+
         @media print {
-          @page { size: A4 portrait; margin: 14mm 16mm; }
+          @page { size: A4 portrait; margin: 12mm 14mm; }
           body, html { background: #ffffff !important; color: #000000 !important; font-family: 'Lexend', sans-serif !important; }
           .no-imprimir { display: none !important; }
           .contenedor-visor { max-width: 100% !important; height: auto !important; padding: 0 !important; margin: 0 !important; }
-          .header-himno-pdf { text-align: center !important; margin-bottom: 20px !important; padding-bottom: 12px !important; border-bottom: 2px solid #e2e8f0 !important; }
-          .header-himno-pdf h1 { font-size: 24pt !important; font-weight: 800 !important; color: #000000 !important; margin: 0 0 6px 0 !important; }
-          .header-himno-pdf p { font-size: 11pt !important; color: #475569 !important; margin: 0 0 10px 0 !important; }
-          .layout-partitura-pdf { display: flex !important; flex-direction: row !important; justify-content: space-between !important; align-items: flex-start !important; gap: 24px !important; }
-          .area-partitura { flex: 1 !important; padding: 0 !important; font-size: 13pt !important; line-height: 1.5 !important; }
+          
+          .layout-partitura-pdf {
+            display: flex !important;
+            flex-direction: row !important;
+            justify-content: space-between !important;
+            align-items: flex-start !important;
+            gap: 20px !important;
+          }
+          .area-partitura {
+            flex: 1 !important;
+            padding: 0 !important;
+            font-size: 12pt !important;
+            line-height: 1.45 !important;
+          }
           .area-partitura * { color: #000000 !important; }
-          .carrusel-acordes { width: 86px !important; display: flex !important; flex-direction: column !important; gap: 14px !important; margin: 0 !important; padding: 0 !important; }
-          .carrusel-acordes figure { background: #ffffff !important; border: 1px solid #cbd5e1 !important; box-shadow: none !important; width: 82px !important; padding: 6px !important; }
+          .area-partitura span[style*="color"] { color: #d46a3f !important; }
+
+          .carrusel-acordes {
+            width: 170px !important;
+            display: grid !important;
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 8px !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            flex-shrink: 0 !important;
+          }
+          .item-acorde-pdf {
+            background: #ffffff !important;
+            border: 1px solid #cbd5e1 !important;
+            box-shadow: none !important;
+            width: 100% !important;
+            padding: 4px !important;
+          }
+          .header-himno-pdf {
+            margin-bottom: 16px !important;
+            padding-bottom: 10px !important;
+            border-bottom: 2px solid #e2e8f0 !important;
+          }
+          .header-himno-pdf h1 { font-size: 22pt !important; font-weight: 800 !important; color: #000000 !important; margin: 0 0 4px 0 !important; }
+          .header-himno-pdf p { font-size: 11pt !important; color: #334155 !important; margin: 0 !important; }
         }
       `}</style>
 
@@ -597,75 +629,85 @@ export default function App() {
       )}
 
       {vistaActual === 'visor' && himnoActivo && (
-        <div style={{ flex: 1, width: '100%', display: 'flex', justifyContent: 'center', overflowY: 'auto' }} ref={scrollRef}>
-          <div className="contenedor-visor" style={{ width: '100%', maxWidth: 720, display: 'flex', flexDirection: 'column', padding: 'max(16px, env(safe-area-inset-top)) 20px max(40px, env(safe-area-inset-bottom)) 20px', gap: 20 }}>
-            
-            <header className="no-imprimir" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <button type="button" className="cn-press" onClick={navegarAtras} style={{ width: 36, height: 36, borderRadius: 999, border: `1px solid ${t.border}`, background: t.surface, color: t.text, display: 'grid', placeItems: 'center' }}>
-                <Icon name="arrow-left" size={18} />
+        <div style={{ flex: 1, width: '100%', display: 'flex', flexDirection: 'column', height: '100dvh', overflow: 'hidden' }}>
+          
+          <header className="no-imprimir" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', background: t.surface, borderBottom: `1px solid ${t.border}` }}>
+            <button type="button" className="cn-press" onClick={navegarAtras} style={{ width: 36, height: 36, borderRadius: 999, border: `1px solid ${t.border}`, background: t.surface2, color: t.text, display: 'grid', placeItems: 'center' }}>
+              <Icon name="arrow-left" size={18} />
+            </button>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ display: 'flex', background: t.surface2, border: `1px solid ${t.border}`, borderRadius: 8, overflow: 'hidden' }}>
+                <button type="button" className="cn-press" onClick={() => setFontIdx(i => Math.max(0, i - 1))} style={{ padding: '6px 10px', background: 'transparent', color: t.text, fontWeight: 700, fontSize: 12 }}>A-</button>
+                <button type="button" className="cn-press" onClick={() => setFontIdx(i => Math.min(FONT_SIZES.length - 1, i + 1))} style={{ padding: '6px 10px', background: 'transparent', color: t.text, fontWeight: 700, fontSize: 12 }}>A+</button>
+              </div>
+
+              <button type="button" className="cn-press" onClick={() => setModoOscuro(!modoOscuro)} style={{ width: 36, height: 36, borderRadius: 999, border: `1px solid ${t.border}`, background: t.surface2, color: t.text, display: 'grid', placeItems: 'center' }}>
+                <Icon name={modoOscuro ? 'moon' : 'sun'} size={16} />
               </button>
-              <div style={{ display: 'flex', gap: 8 }}>
-                <button type="button" className="cn-press" onClick={descargarPDF} style={{ width: 36, height: 36, borderRadius: 999, border: `1px solid ${t.border}`, background: t.surface, color: t.text, display: 'grid', placeItems: 'center' }}>
-                  <Icon name="printer" size={16} />
-                </button>
-                <button type="button" className="cn-press" onClick={() => abrirEditor(himnoActivo)} style={{ width: 36, height: 36, borderRadius: 999, border: `1px solid ${t.border}`, background: t.surface, color: t.text, display: 'grid', placeItems: 'center' }}>
-                  <Icon name="edit" size={16} />
-                </button>
-              </div>
-            </header>
 
-            <div className="header-himno-pdf">
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
-                <span style={{ fontSize: 12, fontWeight: 800, color: t.accent, letterSpacing: '0.08em', textTransform: 'uppercase' }}>{himnoActivo.categoria}</span>
-                <span style={{ fontSize: 12, color: t.muted, fontWeight: 600 }}>{himnoActivo.compas} · {himnoActivo.bpm} BPM</span>
-              </div>
-              <h1 style={{ margin: '0 0 4px 0', fontSize: 'clamp(22px, 5vw, 28px)', fontWeight: 800, color: t.text }}>
-                {formatearEtiqueta(himnoActivo) ? `${formatearEtiqueta(himnoActivo)} · ${himnoActivo.titulo}` : himnoActivo.titulo}
-              </h1>
-              {himnoActivo.autor && <p style={{ margin: 0, fontSize: 13, color: t.muted }}>{himnoActivo.autor}</p>}
+              <button type="button" className="cn-press" onClick={descargarPDF} style={{ width: 36, height: 36, borderRadius: 999, border: `1px solid ${t.border}`, background: t.surface2, color: t.text, display: 'grid', placeItems: 'center' }}>
+                <Icon name="printer" size={15} />
+              </button>
+
+              <button type="button" className="cn-press" onClick={() => abrirEditor(himnoActivo)} style={{ width: 36, height: 36, borderRadius: 999, border: `1px solid ${t.border}`, background: t.surface2, color: t.text, display: 'grid', placeItems: 'center' }}>
+                <Icon name="edit" size={15} />
+              </button>
             </div>
+          </header>
 
-            <div className="no-imprimir" style={{ display: 'flex', flexWrap: 'wrap', gap: 10, background: t.surface, border: `1px solid ${t.border}`, borderRadius: 14, padding: 12, alignItems: 'center', justifyContent: 'space-between', boxShadow: t.shadow }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span style={{ fontSize: 12, fontWeight: 700, color: t.muted }}>TONO:</span>
-                <button type="button" className="cn-press" onClick={() => setSemitonos(s => s - 1)} style={{ width: 30, height: 30, borderRadius: 8, background: t.surface2, color: t.text, fontWeight: 800, fontSize: 14 }}>-</button>
-                <span style={{ minWidth: 32, textAlign: 'center', fontWeight: 800, color: t.accent, fontSize: 14 }}>{tonoActual}</span>
-                <button type="button" className="cn-press" onClick={() => setSemitonos(s => s + 1)} style={{ width: 30, height: 30, borderRadius: 8, background: t.surface2, color: t.text, fontWeight: 800, fontSize: 14 }}>+</button>
+          <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 80px 20px', display: 'flex', justifyContent: 'center' }} ref={scrollRef}>
+            <div className="contenedor-visor" style={{ width: '100%', maxWidth: 720, display: 'flex', flexDirection: 'column', gap: 20 }}>
+              
+              <div className="header-himno-pdf">
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+                  <span style={{ fontSize: 12, fontWeight: 800, color: t.accent, letterSpacing: '0.08em', textTransform: 'uppercase' }}>{himnoActivo.categoria}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: t.muted }}>TONO:</span>
+                    <button type="button" className="cn-press" onClick={() => setSemitonos(s => s - 1)} style={{ width: 26, height: 26, borderRadius: 6, background: t.surface2, color: t.text, fontWeight: 800, fontSize: 12 }}>-</button>
+                    <span style={{ minWidth: 26, textAlign: 'center', fontWeight: 800, color: t.accent, fontSize: 13 }}>{tonoActual}</span>
+                    <button type="button" className="cn-press" onClick={() => setSemitonos(s => s + 1)} style={{ width: 26, height: 26, borderRadius: 6, background: t.surface2, color: t.text, fontWeight: 800, fontSize: 12 }}>+</button>
+                  </div>
+                </div>
+
+                <h1 style={{ margin: '0 0 6px 0', fontSize: 'clamp(22px, 5vw, 28px)', fontWeight: 800, color: t.text }}>
+                  {formatearEtiqueta(himnoActivo) ? `${formatearEtiqueta(himnoActivo)} · ${himnoActivo.titulo}` : himnoActivo.titulo}
+                </h1>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 4 }}>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: t.muted, background: t.surface2, padding: '3px 8px', borderRadius: 6 }}>Compás: {himnoActivo.compas || '4/4'}</span>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: t.muted, background: t.surface2, padding: '3px 8px', borderRadius: 6 }}>BPM: {himnoActivo.bpm || '120'}</span>
+                  {himnoActivo.autor && <span style={{ fontSize: 12, color: t.faint, fontWeight: 600 }}>{himnoActivo.autor}</span>}
+                </div>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span style={{ fontSize: 12, fontWeight: 700, color: t.muted }}>TEXTO:</span>
-                <button type="button" className="cn-press" onClick={() => setFontIdx(i => Math.max(0, i - 1))} style={{ width: 30, height: 30, borderRadius: 8, background: t.surface2, color: t.text, fontWeight: 800, fontSize: 13 }}>A-</button>
-                <button type="button" className="cn-press" onClick={() => setFontIdx(i => Math.min(FONT_SIZES.length - 1, i + 1))} style={{ width: 30, height: 30, borderRadius: 8, background: t.surface2, color: t.text, fontWeight: 800, fontSize: 13 }}>A+</button>
+              <div className="layout-partitura-pdf" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+                <div className="carrusel-acordes cn-scroll" style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4 }}>
+                  {acordesDelHimno(himnoActivo.textoChordPro).map(ac => (
+                    <DiagramaAcordeLexend key={ac} name={transposeChord(ac, semitonos)} tema={t} />
+                  ))}
+                </div>
+
+                <div className="area-partitura" style={{ fontSize: `${FONT_SIZES[fontIdx]}px`, lineHeight: 1.6, display: 'flex', flexDirection: 'column', gap: 6, color: t.text }}>
+                  {himnoActivo.textoChordPro ? himnoActivo.textoChordPro.split('\n').map((linea: string, lIdx: number) => (
+                    <RenderLineaChordPro key={lIdx} linea={linea} semitonos={semitonos} tema={t} />
+                  )) : <p style={{ color: t.muted }}>Sin contenido</p>}
+                </div>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <button type="button" className="cn-press" onClick={() => setScrolling(!scrolling)} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 12px', borderRadius: 8, background: scrolling ? t.accent : t.surface2, color: scrolling ? t.onAccent : t.text, fontWeight: 700, fontSize: 13 }}>
-                  <Icon name={scrolling ? 'pause' : 'play'} size={14} /> {scrolling ? 'Pausar' : 'Auto'}
-                </button>
-                {scrolling && (
-                  <select value={speed} onChange={(e) => setSpeed(Number(e.target.value))} style={{ background: t.surface2, color: t.text, border: `1px solid ${t.border}`, borderRadius: 8, padding: '5px 8px', fontSize: 12, fontWeight: 700 }}>
-                    {SPEEDS.map(s => <option key={s} value={s}>{s}x</option>)}
-                  </select>
-                )}
-              </div>
             </div>
-
-            <div className="layout-partitura-pdf" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-              <div className="carrusel-acordes cn-scroll" style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4 }}>
-                {acordesDelHimno(himnoActivo.textoChordPro).map(ac => (
-                  <DiagramaAcordeLexend key={ac} name={transposeChord(ac, semitonos)} tema={t} />
-                ))}
-              </div>
-
-              <div className="area-partitura" style={{ fontSize: `${FONT_SIZES[fontIdx]}px`, lineHeight: 1.6, display: 'flex', flexDirection: 'column', gap: 6, color: t.text }}>
-                {himnoActivo.textoChordPro ? himnoActivo.textoChordPro.split('\n').map((linea: string, lIdx: number) => (
-                  <RenderLineaChordPro key={lIdx} linea={linea} semitonos={semitonos} tema={t} />
-                )) : <p style={{ color: t.muted }}>Sin contenido</p>}
-              </div>
-            </div>
-
           </div>
+
+          <div className="no-imprimir" style={{ position: 'fixed', bottom: 0, left: 0, right: 0, background: t.surface, borderTop: `1px solid ${t.border}`, padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, zIndex: 100, boxShadow: '0 -4px 16px rgba(0,0,0,0.1)' }}>
+            <span style={{ fontSize: 12, fontWeight: 700, color: t.muted }}>Auto-scroll:</span>
+            <button type="button" className="cn-press" onClick={() => setScrolling(!scrolling)} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 14px', borderRadius: 8, background: scrolling ? t.accent : t.surface2, color: scrolling ? t.onAccent : t.text, fontWeight: 700, fontSize: 13 }}>
+              <Icon name={scrolling ? 'pause' : 'play'} size={14} /> {scrolling ? 'Pausar' : 'Iniciar'}
+            </button>
+            <select value={speed} onChange={(e) => setSpeed(Number(e.target.value))} style={{ background: t.surface2, color: t.text, border: `1px solid ${t.border}`, borderRadius: 8, padding: '6px 10px', fontSize: 12, fontWeight: 700, fontFamily: "'Lexend', sans-serif" }}>
+              {SPEEDS.map(s => <option key={s} value={s}>{s}x</option>)}
+            </select>
+          </div>
+
         </div>
       )}
 
