@@ -491,7 +491,7 @@ export default function App() {
     <div style={{ minHeight: '100dvh', fontFamily: "'Lexend', sans-serif", backgroundColor: t.bg, color: t.text, transition: 'background 0.25s ease, color 0.25s ease', display: 'flex', flexDirection: 'column' }}>
       <style>{`
         * { box-sizing: border-box; }
-        html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; }
+        html, body { margin: 0; padding: 0; height: 100%; overflow: auto; }
         @keyframes animFadeOut { 0% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(1.03); } }
         .cn-scroll { scrollbar-width: none; -ms-overflow-style: none; }
         .cn-scroll::-webkit-scrollbar { display: none; }
@@ -771,7 +771,7 @@ export default function App() {
             </div>
           </header>
 
-          <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 120px 20px', display: 'block' }} ref={scrollRef}>
+          <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '16px 20px 120px 20px', display: 'block' }} ref={scrollRef}>
             <div style={{ maxWidth: 720, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 20 }} className="contenedor-visor">
               
               <div className="header-himno-pdf">
