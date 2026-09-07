@@ -46,7 +46,7 @@ function Icon({ name, size = 18 }: { name: string; size?: number }) {
     case 'search': return <svg {...common}><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>;
     case 'moon': return <svg {...common}><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" /></svg>;
     case 'sun': return <svg {...common}><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></svg>;
-    case 'settings': return <svg {...common}><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l-.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z" /></svg>;
+    case 'settings': return <svg {...common}><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z" /></svg>;
     case 'plus': return <svg {...common} strokeWidth={2.4}><path d="M12 5v14M5 12h14" /></svg>;
     case 'stack': return <svg {...common}><path d="M4 7.5 12 4l8 3.5-8 3.5-8-3.5Z" /><path d="m4 12 8 3.5 8-3.5M4 16.5 12 20l8-3.5" /></svg>;
     case 'layers': return <svg {...common}><rect x="4" y="4" width="12" height="12" rx="2" /><path d="M8 20h10a2 2 0 0 0 2-2V8" /></svg>;
@@ -82,7 +82,7 @@ function calcularDiagramaAcorde(nombreAcorde: string) {
   const limpio = nombreAcorde.split('/')[0].trim();
   const match = limpio.match(/^([A-G][#b]?)(.*)$/);
   if (!match) return null;
-  const [, raiz, tipo] = match;
+  const [, raiz] = match;
   const norm = FLAT_TO_SHARP[raiz] || raiz;
   const semitonoRaiz = INDICES_NOTAS[norm];
   if (semitonoRaiz === undefined) return null;
@@ -90,10 +90,9 @@ function calcularDiagramaAcorde(nombreAcorde: string) {
   const basicos: Record<string, any> = {
     "C": { frets: [-1, 3, 2, 0, 1, 0] },
     "Dm": { frets: [-1, -1, 0, 2, 3, 1] },
-    "Em": { frets: [0, 2, 2, 0, 0, 0] },
     "E": { frets: [0, 2, 2, 1, 0, 0] },
+    "Em": { frets: [0, 2, 2, 0, 0, 0] },
     "G": { frets: [3, 2, 0, 0, 0, 3] },
-    "Gm": { baseFret: 3, barre: { fret: 3, from: 0, to: 5 }, frets: [3, 5, 5, 3, 3, 3] },
     "A": { frets: [-1, 0, 2, 2, 2, 0] },
     "Am": { frets: [-1, 0, 2, 2, 1, 0] },
     "Bb": { baseFret: 1, barre: { fret: 1, from: 0, to: 5 }, frets: [1, 3, 3, 2, 1, 1] },
@@ -104,15 +103,12 @@ function calcularDiagramaAcorde(nombreAcorde: string) {
   };
 
   if (basicos[limpio]) return basicos[limpio];
-  if (tipo.toLowerCase().includes('m')) {
-    let t5 = (semitonoRaiz - 9 + 12) % 12;
-    if (t5 === 0) t5 = 12;
-    return { baseFret: t5, barre: { fret: t5, from: 0, to: 5 }, frets: [t5, t5 + 2, t5 + 2, t5, t5, t5] };
-  } else {
-    let t6 = (semitonoRaiz - 4 + 12) % 12;
-    if (t6 === 0) t6 = 12;
+  let t6 = (semitonoRaiz - 4 + 12) % 12;
+  if (t6 >= 1 && t6 <= 8) {
     return { baseFret: t6, barre: { fret: t6, from: 0, to: 5 }, frets: [t6, t6 + 2, t6 + 2, t6 + 1, t6, t6] };
   }
+  let t5 = (semitonoRaiz - 9 + 12) % 12;
+  return { baseFret: t5, barre: { fret: t5, from: 1, to: 5 }, frets: [-1, t5, t5 + 2, t5 + 2, t5 + 2, t5] };
 }
 
 const STRINGS = 6, FRETS = 4, W = 64, H = 72, PAD_X = 8, PAD_TOP = 12;
@@ -272,10 +268,17 @@ export default function App() {
     }
   ];
 
-  const [himnos, setHimnos] = useState(himnosIniciales);
-  const [himnoActivo, setHimnoActivo] = useState(himnosIniciales[0]);
-  const [recientes, setRecientes] = useState([himnosIniciales[0]]);
-  const [favoritos, setFavoritos] = useState([himnosIniciales[0]]);
+  const [himnos, setHimnos] = useState(() => {
+    try {
+      const guardados = localStorage.getItem('nasa_cifras_himnos');
+      if (guardados) return JSON.parse(guardados);
+    } catch (e) {}
+    return himnosIniciales;
+  });
+
+  const [himnoActivo, setHimnoActivo] = useState(himnos[0]);
+  const [recientes, setRecientes] = useState([himnos[0]]);
+  const [favoritos, setFavoritos] = useState([himnos[0]]);
 
   useEffect(() => {
     try {
@@ -283,9 +286,18 @@ export default function App() {
       const unsubscribe = onSnapshot(q, (snapshot) => {
         if (!snapshot.empty) {
           const listaCloud = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-          setHimnos(listaCloud);
+          setHimnos(prev => {
+            const combinado = [...listaCloud];
+            prev.forEach(itemLocal => {
+              if (!combinado.some(c => c.id === itemLocal.id)) {
+                combinado.push(itemLocal);
+              }
+            });
+            localStorage.setItem('nasa_cifras_himnos', JSON.stringify(combinado));
+            return combinado;
+          });
         }
-      }, (err) => { console.warn("Firestore offline:", err.message); });
+      }, (err) => { console.warn("Firestore sync offline mode"); });
       return () => unsubscribe();
     } catch (e) { console.warn("Firestore offline"); }
   }, []);
@@ -385,15 +397,17 @@ export default function App() {
     };
 
     const himnoCompleto = { id: idDoc, ...objetoHimno };
+    
     setHimnos(prev => {
       const existe = prev.some(h => String(h.id) === idDoc);
-      if (existe) return prev.map(h => String(h.id) === idDoc ? himnoCompleto : h);
-      return [himnoCompleto, ...prev];
+      let nuevaLista = existe ? prev.map(h => String(h.id) === idDoc ? himnoCompleto : h) : [himnoCompleto, ...prev];
+      localStorage.setItem('nasa_cifras_himnos', JSON.stringify(nuevaLista));
+      return nuevaLista;
     });
 
     try {
       await setDoc(doc(db, "himnos", idDoc), objetoHimno, { merge: true });
-    } catch (err) { console.warn("Guardado localmente"); }
+    } catch (err) { console.warn("Guardado local persistente OK"); }
 
     seleccionarHimno(himnoCompleto);
   };
@@ -408,13 +422,13 @@ export default function App() {
   const tonoActual = transposeChord(himnoActivo?.tonoBase || 'C', semitonos);
 
   const CATEGORIES = [
-    { key: 'Suplementarios', title: 'Suplementarios', badge: 'S-', count: himnos.filter(h => h.categoria === 'Suplementarios').length, hint: 'Himnario suplementario', icon: 'stack' },
-    { key: 'Complementarios', title: 'Complementarios', badge: 'C-', count: himnos.filter(h => h.categoria === 'Complementarios').length, hint: 'Cantos complementarios', icon: 'layers' },
-    { key: 'Himnos', title: 'Himnos', badge: 'H-', count: himnos.filter(h => h.categoria === 'Himnos').length, hint: 'Himnario clásico', icon: 'music' },
-    { key: 'Nuevos', title: 'Nuevos', badge: '✨', count: himnos.filter(h => h.categoria === 'Nuevos').length, hint: 'Agregados recientemente', icon: 'sparkle' },
+    { key: 'Suplementarios', title: 'Suplementarios', badge: 'S-', count: himnos.filter((h: any) => h.categoria === 'Suplementarios').length, hint: 'Himnario suplementario', icon: 'stack' },
+    { key: 'Complementarios', title: 'Complementarios', badge: 'C-', count: himnos.filter((h: any) => h.categoria === 'Complementarios').length, hint: 'Cantos complementarios', icon: 'layers' },
+    { key: 'Himnos', title: 'Himnos', badge: 'H-', count: himnos.filter((h: any) => h.categoria === 'Himnos').length, hint: 'Himnario clásico', icon: 'music' },
+    { key: 'Nuevos', title: 'Nuevos', badge: '✨', count: himnos.filter((h: any) => h.categoria === 'Nuevos').length, hint: 'Agregados recientemente', icon: 'sparkle' },
   ];
 
-  const himnosFiltrados = query.trim() === '' ? [] : himnos.filter(h => {
+  const himnosFiltrados = query.trim() === '' ? [] : himnos.filter((h: any) => {
     const q = query.toLowerCase().trim();
     return h.titulo.toLowerCase().includes(q) || (h.numero && h.numero.includes(q));
   });
@@ -438,13 +452,12 @@ export default function App() {
           .no-imprimir { display: none !important; }
           .contenedor-visor { max-width: 100% !important; height: auto !important; padding: 0 !important; margin: 0 !important; }
           
-          /* ESTRICTO: Letra a la izquierda, Acordes a la derecha en PDF */
           .layout-partitura-pdf {
             display: flex !important;
-            flex-direction: row-reverse !important;
+            flex-direction: row !important;
             justify-content: space-between !important;
             align-items: flex-start !important;
-            gap: 24px !important;
+            gap: 20px !important;
           }
           .area-partitura {
             flex: 1 !important;
@@ -456,10 +469,10 @@ export default function App() {
           .area-partitura span[style*="color"] { color: #d46a3f !important; }
 
           .carrusel-acordes {
-            width: 180px !important;
+            width: 170px !important;
             display: grid !important;
             grid-template-columns: repeat(2, 1fr) !important;
-            gap: 10px !important;
+            gap: 8px !important;
             margin: 0 !important;
             padding: 0 !important;
             flex-shrink: 0 !important;
@@ -469,7 +482,7 @@ export default function App() {
             border: 1px solid #cbd5e1 !important;
             box-shadow: none !important;
             width: 100% !important;
-            padding: 6px !important;
+            padding: 4px !important;
           }
           .header-himno-pdf {
             margin-bottom: 16px !important;
@@ -513,7 +526,7 @@ export default function App() {
               </label>
               {query.trim() !== '' && (
                 <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  {himnosFiltrados.map(h => (
+                  {himnosFiltrados.map((h: any) => (
                     <div key={h.id} onClick={() => { setQuery(''); seleccionarHimno(h); }} style={{ background: t.surface, border: `1px solid ${t.border}`, borderRadius: 12, padding: '11px 14px', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                         {formatearEtiqueta(h) && <span style={{ color: t.accent, fontWeight: 700, fontSize: 13 }}>{formatearEtiqueta(h)}</span>}
@@ -569,7 +582,7 @@ export default function App() {
                     </div>
                   </div>
                   <div className="cn-scroll" style={{ display: 'flex', gap: 10, overflowX: 'auto', margin: '0 -18px', padding: '2px 18px 6px' }}>
-                    {listTab.map((s) => (
+                    {listTab.map((s: any) => (
                       <button key={s.id} type="button" className="cn-press" onClick={() => seleccionarHimno(s)} style={{ background: t.surface, border: `1px solid ${t.border}`, borderRadius: 14, padding: '12px 14px', minWidth: 150, textAlign: 'left', display: 'flex', flexDirection: 'column', gap: 6, boxShadow: t.shadow, flexShrink: 0 }}>
                         <span style={{ fontSize: 11, fontWeight: 700, color: t.accent }}>{formatearEtiqueta(s) || s.categoria}</span>
                         <span style={{ fontWeight: 600, fontSize: 13, color: t.text, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.titulo}</span>
@@ -616,7 +629,7 @@ export default function App() {
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {himnos.filter(h => h.categoria === categoriaSel).map(h => (
+                {himnos.filter((h: any) => h.categoria === categoriaSel).map((h: any) => (
                   <div key={h.id} onClick={() => seleccionarHimno(h)} style={{ background: t.surface, border: `1px solid ${t.border}`, borderRadius: 12, padding: '12px 14px', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                       {formatearEtiqueta(h) && <span style={{ fontWeight: 800, color: t.accent, fontSize: 13, minWidth: 32 }}>{formatearEtiqueta(h)}</span>}
