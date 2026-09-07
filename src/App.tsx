@@ -65,7 +65,16 @@ function Icon({ name, size = 18 }: { name: string; size?: number }) {
   }
 }
 
-const NOTES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+const NOTES = ['C', 'C#', 'Db', 'D', 'D#', 'Eb', 'E', 'F', 'F#', 'Gb', 'G', 'G#', 'Ab', 'A', 'A#', 'Bb', 'B'];
+const ALL_TONES = [
+  'C', 'Cm', 'C#', 'C#m', 'Db', 'Dbm',
+  'D', 'Dm', 'D#', 'D#m', 'Eb', 'Ebm',
+  'E', 'Em',
+  'F', 'Fm', 'F#', 'F#m', 'Gb', 'Gbm',
+  'G', 'Gm', 'G#', 'G#m', 'Ab', 'Abm',
+  'A', 'Am', 'A#', 'A#m', 'Bb', 'Bbm',
+  'B', 'Bm'
+];
 const LATIN_NOTES = ['Do', 'Do#', 'Re', 'Re#', 'Mi', 'Fa', 'Fa#', 'Sol', 'Sol#', 'La', 'La#', 'Si'];
 const FLAT_TO_SHARP: Record<string, string> = { Db: 'C#', Eb: 'D#', Gb: 'F#', Ab: 'G#', Bb: 'A#' };
 const INDICES_NOTAS: Record<string, number> = { "C": 0, "C#": 1, "Db": 1, "D": 2, "D#": 3, "Eb": 3, "E": 4, "F": 5, "F#": 6, "Gb": 6, "G": 7, "G#": 8, "Ab": 8, "A": 9, "A#": 10, "Bb": 10, "B": 11 };
@@ -94,13 +103,21 @@ function calcularDiagramaAcorde(nombreAcorde: string) {
 
   const basicos: Record<string, any> = {
     "C": { frets: [-1, 3, 2, 0, 1, 0] },
+    "Cm": { baseFret: 3, barre: { fret: 3, from: 0, to: 4 }, frets: [3, 5, 5, 3, 3, 3] },
     "Dm": { frets: [-1, -1, 0, 2, 3, 1] },
+    "D": { frets: [-1, -1, 0, 2, 3, 2] },
     "E": { frets: [0, 2, 2, 1, 0, 0] },
     "Em": { frets: [0, 2, 2, 0, 0, 0] },
     "G": { frets: [3, 2, 0, 0, 0, 3] },
+    "Gm": { baseFret: 3, barre: { fret: 3, from: 0, to: 5 }, frets: [3, 5, 5, 3, 3, 3] },
     "A": { frets: [-1, 0, 2, 2, 2, 0] },
     "Am": { frets: [-1, 0, 2, 2, 1, 0] },
     "Bb": { baseFret: 1, barre: { fret: 1, from: 0, to: 5 }, frets: [1, 3, 3, 2, 1, 1] },
+    "Bbm": { baseFret: 1, barre: { fret: 1, from: 0, to: 5 }, frets: [1, 3, 3, 1, 1, 1] },
+    "B": { baseFret: 2, barre: { fret: 2, from: 0, to: 5 }, frets: [2, 4, 4, 4, 2, 2] },
+    "Bm": { baseFret: 2, barre: { fret: 2, from: 0, to: 5 }, frets: [2, 4, 4, 3, 2, 2] },
+    "C#m": { baseFret: 4, barre: { fret: 4, from: 0, to: 5 }, frets: [4, 6, 6, 5, 4, 4] },
+    "F#m": { baseFret: 2, barre: { fret: 2, from: 0, to: 5 }, frets: [2, 4, 4, 2, 2, 2] },
     "F": { baseFret: 1, barre: { fret: 1, from: 0, to: 5 }, frets: [1, 3, 3, 2, 1, 1] },
     "C7": { frets: [-1, 3, 2, 3, 1, -1] },
     "A7": { frets: [-1, 0, 2, 0, 2, 0] },
@@ -254,7 +271,7 @@ export default function App() {
   const [formCompas, setFormCompas] = useState('4/4');
   const [formBpm, setFormBpm] = useState('132');
   const [formAutor, setFormAutor] = useState('');
-  const [formTono, setFormTono] = useState('Dm');
+  const [formTono, setFormTono] = useState('C');
   const [formCuerpo, setFormCuerpo] = useState('');
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -869,10 +886,7 @@ export default function App() {
                 <div>
                   <label style={{ fontSize: 12, fontWeight: 700, color: t.muted, display: 'block', marginBottom: 4 }}>Tono Base</label>
                   <select value={formTono} onChange={(e) => setFormTono(e.target.value)} style={{ width: '100%', background: t.surface, color: t.text, border: `1px solid ${t.border}`, borderRadius: 10, padding: '10px 12px', fontSize: 14, fontFamily: "'Lexend', sans-serif" }}>
-                    {NOTES.map(n => <option key={n} value={n}>{n}</option>)}
-                    <option value="Dm">Dm</option>
-                    <option value="Am">Am</option>
-                    <option value="Em">Em</option>
+                    {ALL_TONES.map(n => <option key={n} value={n}>{n}</option>)}
                   </select>
                 </div>
                 <div>
