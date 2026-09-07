@@ -65,7 +65,6 @@ function Icon({ name, size = 18 }: { name: string; size?: number }) {
   }
 }
 
-const NOTES = ['C', 'C#', 'Db', 'D', 'D#', 'Eb', 'E', 'F', 'F#', 'Gb', 'G', 'G#', 'Ab', 'A', 'A#', 'Bb', 'B'];
 const ALL_TONES = [
   'C', 'Cm', 'C#', 'C#m', 'Db', 'Dbm',
   'D', 'Dm', 'D#', 'D#m', 'Eb', 'Ebm',
@@ -75,31 +74,10 @@ const ALL_TONES = [
   'A', 'Am', 'A#', 'A#m', 'Bb', 'Bbm',
   'B', 'Bm'
 ];
-const LATIN_NOTES = ['Do', 'Do#', 'Re', 'Re#', 'Mi', 'Fa', 'Fa#', 'Sol', 'Sol#', 'La', 'La#', 'Si'];
-const FLAT_TO_SHARP: Record<string, string> = { Db: 'C#', Eb: 'D#', Gb: 'F#', Ab: 'G#', Bb: 'A#' };
-const INDICES_NOTAS: Record<string, number> = { "C": 0, "C#": 1, "Db": 1, "D": 2, "D#": 3, "Eb": 3, "E": 4, "F": 5, "F#": 6, "Gb": 6, "G": 7, "G#": 8, "Ab": 8, "A": 9, "A#": 10, "Bb": 10, "B": 11 };
-
-function transposeChord(chord: string, steps: number, notation: 'america' | 'latina'): string {
-  if (!chord) return chord;
-  return chord.replace(/([A-G][#b]?)/g, (root) => {
-    const normalized = FLAT_TO_SHARP[root] || root;
-    const index = NOTES.indexOf(normalized);
-    if (index === -1) return root;
-    const nuevoIndex = (index + steps + 144) % 12;
-    return notation === 'latina' ? LATIN_NOTES[nuevoIndex] : NOTES[nuevoIndex];
-  });
-}
 
 function calcularDiagramaAcorde(nombreAcorde: string) {
   if (!nombreAcorde) return null;
   const limpio = nombreAcorde.split('/')[0].trim();
-  const match = limpio.match(/^([A-G][#b]?)(.*)$/);
-  if (!match) return null;
-  const [, raiz] = match;
-  const norm = FLAT_TO_SHARP[raiz] || raiz;
-  const semitonoRaiz = INDICES_NOTAS[norm];
-  if (semitonoRaiz === undefined) return null;
-
   const basicos: Record<string, any> = {
     "C": { frets: [-1, 3, 2, 0, 1, 0] },
     "Cm": { baseFret: 3, barre: { fret: 3, from: 0, to: 4 }, frets: [3, 5, 5, 3, 3, 3] },
@@ -122,16 +100,10 @@ function calcularDiagramaAcorde(nombreAcorde: string) {
     "A7": { frets: [-1, 0, 2, 0, 2, 0] },
     "B7": { frets: [-1, 2, 1, 2, 0, 2] },
     "A7M": { frets: [-1, 0, 2, 1, 2, 0] },
+    "C#7M": { baseFret: 4, barre: { fret: 4, from: 0, to: 4 }, frets: [4, 6, 5, 6, 4, -1] },
     "E/G#": { frets: [4, -1, 2, 4, 5, -1] },
   };
-
-  if (basicos[limpio]) return basicos[limpio];
-  let t6 = (semitonoRaiz - 4 + 12) % 12;
-  if (t6 >= 1 && t6 <= 8) {
-    return { baseFret: t6, barre: { fret: t6, from: 0, to: 5 }, frets: [t6, t6 + 2, t6 + 2, t6 + 1, t6, t6] };
-  }
-  let t5 = (semitonoRaiz - 9 + 12) % 12;
-  return { baseFret: t5, barre: { fret: t5, from: 1, to: 5 }, frets: [-1, t5, t5 + 2, t5 + 2, t5 + 2, t5] };
+  return basicos[limpio] || { frets: [-1, -1, 0, 2, 3, 2] };
 }
 
 const STRINGS = 6, FRETS = 4, W = 64, H = 72, PAD_X = 8, PAD_TOP = 12;
@@ -139,7 +111,7 @@ const GRID_W = W - PAD_X * 2, GRID_H = H - PAD_TOP - 6;
 const STRING_GAP = GRID_W / (STRINGS - 1), FRET_GAP = GRID_H / FRETS;
 
 function DiagramaAcordeLexend({ name, tema, colorAcordes }: { name: string; tema: any; colorAcordes: string }) {
-  const shape = calcularDiagramaAcorde(name) || { frets: [-1, -1, 0, 2, 3, 2] };
+  const shape = calcularDiagramaAcorde(name);
   const baseFret = shape.baseFret || 1;
 
   return (
@@ -181,7 +153,7 @@ function formatearEtiqueta(himno: any) {
   return '';
 }
 
-function RenderLineaChordPro({ linea, semitonos, tema, fontSizeAcordes, fontSizeLetra, colorAcordes, notacion }: { linea: string; semitonos: number; tema: any; fontSizeAcordes: number; fontSizeLetra: number; colorAcordes: string; notacion: 'america' | 'latina' }) {
+function RenderLineaChordPro({ linea, tema, fontSizeAcordes, fontSizeLetra, colorAcordes }: { linea: string; tema: any; fontSizeAcordes: number; fontSizeLetra: number; colorAcordes: string }) {
   const lineaTrim = linea.trim();
   if (!lineaTrim) return <div style={{ height: '14px' }} />;
   const esSeccion = /^(ESTROFA|CORO|PUENTE|INTRO|CODA)/i.test(lineaTrim);
@@ -189,34 +161,32 @@ function RenderLineaChordPro({ linea, semitonos, tema, fontSizeAcordes, fontSize
     return <div style={{ marginTop: '20px', marginBottom: '6px', fontWeight: '800', fontSize: '0.8em', color: tema.muted, letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: "'Lexend', sans-serif" }}>{lineaTrim}</div>;
   }
 
-  // Parse exact tokens [acorde]texto
-  const partes: { acorde: string | null; texto: string }[] = [];
+  // Segment exact tokens of [acorde] and text chunks without any auto-transposition or modification
+  const tokens: { acorde: string | null; texto: string }[] = [];
   const regex = /\[([^\]]+)\]([^[]*)/g;
   let match;
-  let ultimoIndice = 0;
+  let lastIndex = 0;
 
-  // Check if line starts with text before any bracket
-  const primerMatchIndex = linea.indexOf('[');
-  if (primerMatchIndex > 0) {
-    partes.push({ acorde: null, texto: linea.slice(0, primerMatchIndex) });
-    ultimoIndice = primerMatchIndex;
-  } else if (primerMatchIndex === -1) {
-    partes.push({ acorde: null, texto: linea });
+  const firstBracket = linea.indexOf('[');
+  if (firstBracket > 0) {
+    tokens.push({ acorde: null, texto: linea.slice(0, firstBracket) });
+  } else if (firstBracket === -1) {
+    tokens.push({ acorde: null, texto: linea });
   }
 
   while ((match = regex.exec(linea)) !== null) {
-    partes.push({ acorde: match[1].trim(), texto: match[2] });
+    tokens.push({ acorde: match[1].trim(), texto: match[2] });
   }
 
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', minHeight: '36px', margin: '2px 0' }}>
-      {partes.map((p, idx) => (
-        <span key={idx} style={{ display: 'inline-flex', flexDirection: 'column', verticalAlign: 'bottom', marginRight: p.texto && !p.acorde ? '0px' : '2px' }}>
-          <span style={{ fontSize: `${fontSizeAcordes}px`, fontWeight: '800', color: colorAcordes, lineHeight: '1.2', fontFamily: "'Lexend', sans-serif", visibility: p.acorde ? 'visible' : 'hidden' }}>
-            {p.acorde ? transposeChord(p.acorde, semitonos, notacion) : '.'}
+      {tokens.map((t, idx) => (
+        <span key={idx} style={{ display: 'inline-flex', flexDirection: 'column', verticalAlign: 'bottom', marginRight: '0px' }}>
+          <span style={{ fontSize: `${fontSizeAcordes}px`, fontWeight: '800', color: colorAcordes, lineHeight: '1.2', fontFamily: "'Lexend', sans-serif", visibility: t.acorde ? 'visible' : 'hidden' }}>
+            {t.acorde ? t.acorde : '.'}
           </span>
           <span style={{ fontSize: `${fontSizeLetra}px`, lineHeight: '1.25', color: tema.text, fontFamily: "'Lexend', sans-serif", whiteSpace: 'pre' }}>
-            {p.texto || '\u00A0'}
+            {t.texto || '\u00A0'}
           </span>
         </span>
       ))}
@@ -245,7 +215,6 @@ export default function App() {
     } catch (e) {}
   }, [modoOscuro]);
 
-  const [semitonos, setSemitonos] = useState(0);
   const [scrolling, setScrolling] = useState(false);
   const [speed, setSpeed] = useState(1);
   const [query, setQuery] = useState('');
@@ -286,17 +255,6 @@ export default function App() {
       autor: "Hebert Faria / Samuel Huh",
       tonoBase: "Dm",
       textoChordPro: "INTRO\n[Dm]    [Bb]    [F]    [C]    [Dm]\nOh, oh, oh, oh, oh, oh, oh.\n\nESTROFA 1\n[Dm]Hay una nube que con[Bb]duce la iglesia;\nHay una [F]voz que nos ordena [C]ir a la [Dm]guerra.\n¿Quién va a oír el hablar que está fluyendo de Dios?\n\nCORO\n[Bb]¡Heme aquí! No teme[F]ré, ¡atiendo a Tu llama[C]do!\n[Dm]Te seguiré, y busca[Bb]ré las cosas [F]de lo al[C]to.\n[Gm]¡Obedecer! No duda[Dm]ré, murmuración [Bb]ya de[F]jo.\n[Gm]Si no es de Dios, lo olvida[Bb]ré, así en Cristo [F]crezco.[C]"
-    },
-    {
-      id: "2",
-      categoria: "Suplementarios",
-      numero: "53",
-      titulo: "Mídenos, mídenos",
-      compas: "4/4",
-      bpm: "110",
-      autor: "Ez 47:1-12",
-      tonoBase: "Dm",
-      textoChordPro: "ESTROFA 1\n[Dm]Al hogar, al hogar, [Gm]al hogar de Dios,\n[C]Donde está el manantial [F]he venido yo,\n[Gm]Un fluir hay aquí [Dm]que no cesará,\n[A7]Y hace crecer vida [Dm]hasta madurar.\n\nCORO\n[Bb]Mídenos, mídenos, [C]mide en verdad,\n[F]Mídenos, [Em]mídenos, [Dm]cada día más."
     }
   ];
 
@@ -370,7 +328,6 @@ export default function App() {
 
   const seleccionarHimno = (h: any) => {
     setHimnoActivo(h);
-    setSemitonos(0);
     setRecientes((prev) => [h, ...prev.filter((item) => item.id !== h.id)].slice(0, 8));
     setVistaActual('visor');
   };
@@ -477,8 +434,6 @@ export default function App() {
     else if (vistaActual === 'lista') setVistaActual('categories');
     else if (vistaActual === 'categories' || vistaActual === 'formulario') setVistaActual('menu');
   };
-
-  const tonoActual = transposeChord(himnoActivo?.tonoBase || 'C', semitonos, notacionCifrado);
 
   const CATEGORIES = [
     { key: 'Suplementarios', title: 'Suplementarios', badge: 'S-', count: himnos.filter((h: any) => h.categoria === 'Suplementarios').length, hint: 'Himnario suplementario', icon: 'stack' },
@@ -746,7 +701,7 @@ export default function App() {
                     <span style={{ fontWeight: 600, fontSize: 14, color: t.text }}>{h.titulo}</span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span style={{ fontSize: 11, color: t.muted, background: t.surface2, padding: '2px 8px', borderRadius: 6 }}>{transposeChord(h.tonoBase || 'C', 0, notacionCifrado)}</span>
+                    <span style={{ fontSize: 11, color: t.muted, background: t.surface2, padding: '2px 8px', borderRadius: 6 }}>{h.tonoBase || 'C'}</span>
                   </div>
                 </div>
               ))}
@@ -786,9 +741,7 @@ export default function App() {
                   <span style={{ fontSize: 12, fontWeight: 800, color: colorAcordes, letterSpacing: '0.08em', textTransform: 'uppercase' }}>{himnoActivo.categoria}</span>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                     <span style={{ fontSize: 12, fontWeight: 700, color: t.muted }}>TONO:</span>
-                    <button type="button" className="cn-press" onClick={() => setSemitonos(s => s - 1)} style={{ width: 26, height: 26, borderRadius: 6, background: t.surface2, color: t.text, fontWeight: 800, fontSize: 12 }}>-</button>
-                    <span style={{ minWidth: 26, textAlign: 'center', fontWeight: 800, color: colorAcordes, fontSize: 13 }}>{tonoActual}</span>
-                    <button type="button" className="cn-press" onClick={() => setSemitonos(s => s + 1)} style={{ width: 26, height: 26, borderRadius: 6, background: t.surface2, color: t.text, fontWeight: 800, fontSize: 12 }}>+</button>
+                    <span style={{ minWidth: 26, textAlign: 'center', fontWeight: 800, color: colorAcordes, fontSize: 13 }}>{himnoActivo.tonoBase || 'C'}</span>
                   </div>
                 </div>
 
@@ -806,13 +759,13 @@ export default function App() {
               <div className="layout-partitura-pdf" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
                 <div className="carrusel-acordes cn-scroll" style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4 }}>
                   {acordesDelHimno(himnoActivo.textoChordPro).map(ac => (
-                    <DiagramaAcordeLexend key={ac} name={transposeChord(ac, semitonos, notacionCifrado)} tema={t} colorAcordes={colorAcordes} />
+                    <DiagramaAcordeLexend key={ac} name={ac} tema={t} colorAcordes={colorAcordes} />
                   ))}
                 </div>
 
                 <div className="area-partitura" style={{ display: 'flex', flexDirection: 'column', gap: 6, color: t.text }}>
                   {himnoActivo.textoChordPro ? himnoActivo.textoChordPro.split('\n').map((linea: string, lIdx: number) => (
-                    <RenderLineaChordPro key={lIdx} linea={linea} semitonos={semitonos} tema={t} fontSizeAcordes={fontSizeAcordes} fontSizeLetra={fontSizeLetra} colorAcordes={colorAcordes} notacion={notacionCifrado} />
+                    <RenderLineaChordPro key={lIdx} linea={linea} tema={t} fontSizeAcordes={fontSizeAcordes} fontSizeLetra={fontSizeLetra} colorAcordes={colorAcordes} />
                   )) : <p style={{ color: t.muted }}>Sin contenido</p>}
                 </div>
               </div>
