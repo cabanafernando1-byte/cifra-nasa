@@ -489,7 +489,7 @@ export default function App() {
     <div style={{ height: '100dvh', overflow: 'hidden', fontFamily: "'Lexend', sans-serif", backgroundColor: t.bg, color: t.text, display: 'flex', flexDirection: 'column' }}>
       <style>{`
         * { box-sizing: border-box; }
-        html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; }
+        html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background-color: ${t.bg}; }
         @keyframes animFadeOut { 0% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(1.03); } }
         .cn-scroll { scrollbar-width: none; -ms-overflow-style: none; }
         .cn-scroll::-webkit-scrollbar { display: none; }
@@ -747,7 +747,7 @@ export default function App() {
       )}
 
       {vistaActual === 'visor' && himnoActivo && (
-        <div style={{ flex: 1, width: '100%', display: 'flex', flexDirection: 'column', height: '100dvh', overflow: 'hidden' }}>
+        <div style={{ flex: 1, width: '100%', display: 'flex', flexDirection: 'column', height: '100dvh', overflow: 'hidden', backgroundColor: t.bg }}>
           
           <header className="no-imprimir" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', background: t.surface, borderBottom: `1px solid ${t.border}`, flexShrink: 0 }}>
             <button type="button" className="cn-press" onClick={navegarAtras} style={{ width: 36, height: 36, borderRadius: 999, border: `1px solid ${t.border}`, background: t.surface2, color: t.text, display: 'grid', placeItems: 'center' }}>
@@ -769,7 +769,7 @@ export default function App() {
             </div>
           </header>
 
-          <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', WebkitOverflowScrolling: 'touch', padding: '16px 20px 130px 20px' }} ref={scrollRef}>
+          <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', WebkitOverflowScrolling: 'touch', padding: '16px 20px 130px 20px', backgroundColor: t.bg }} ref={scrollRef}>
             <div style={{ maxWidth: 720, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 20 }} className="contenedor-visor">
               
               <div className="header-himno-pdf">
@@ -829,8 +829,8 @@ export default function App() {
       )}
 
       {vistaActual === 'formulario' && (
-        <div style={{ flex: 1, width: '100%', display: 'flex', justifyContent: 'center', overflowY: 'auto' }}>
-          <form onSubmit={guardarFormulario} style={{ width: '100%', maxWidth: 520, display: 'flex', flexDirection: 'column', padding: 'max(16px, env(safe-area-inset-top)) 18px max(24px, env(safe-area-inset-bottom)) 18px', gap: 16 }}>
+        <div style={{ flex: 1, width: '100%', minHeight: '100dvh', display: 'flex', justifyContent: 'center', overflowY: 'auto', backgroundColor: t.bg }}>
+          <form onSubmit={guardarFormulario} style={{ width: '100%', maxWidth: 520, display: 'flex', flexDirection: 'column', padding: 'max(16px, env(safe-area-inset-top)) 18px max(40px, env(safe-area-inset-bottom)) 18px', gap: 16, backgroundColor: t.bg }}>
             <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <button type="button" className="cn-press" onClick={() => setVistaActual('menu')} style={{ width: 36, height: 36, borderRadius: 999, border: `1px solid ${t.border}`, background: t.surface, color: t.text, display: 'grid', placeItems: 'center' }}>
@@ -862,7 +862,7 @@ export default function App() {
 
               <div>
                 <label style={{ fontSize: 12, fontWeight: 700, color: t.muted, display: 'block', marginBottom: 4 }}>Título</label>
-                <input type="text" required value={formTitle} onChange={(e) => setFormTitulo(e.target.value)} placeholder="Título del canto" style={{ width: '100%', background: t.surface, color: t.text, border: `1px solid ${t.border}`, borderRadius: 10, padding: '10px 12px', fontSize: 14, fontFamily: "'Lexend', sans-serif" }} />
+                <input type="text" required value={formTitulo} onChange={(e) => setFormTitulo(e.target.value)} placeholder="Título del canto" style={{ width: '100%', background: t.surface, color: t.text, border: `1px solid ${t.border}`, borderRadius: 10, padding: '10px 12px', fontSize: 14, fontFamily: "'Lexend', sans-serif" }} />
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
