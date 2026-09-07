@@ -222,7 +222,6 @@ export default function App() {
   const [vistaActual, setVistaActual] = useState('menu');
   const [categoriaSel, setCategoriaSel] = useState('Suplementarios');
   
-  // Persistencia de Modo Oscuro
   const [modoOscuro, setModoOscuro] = useState(() => {
     try {
       const guardado = localStorage.getItem('nasa_cifras_dark');
@@ -243,7 +242,6 @@ export default function App() {
   const [query, setQuery] = useState('');
   const [tab, setTab] = useState('recent');
 
-  // Nuevos ajustes solicitados
   const [fontSizeLetra, setFontSizeLetra] = useState(16);
   const [fontSizeAcordes, setFontSizeAcordes] = useState(14);
   const [notacionCifrado, setNotacionCifrado] = useState<'america' | 'latina'>('america');
@@ -337,14 +335,14 @@ export default function App() {
     const el = scrollRef.current;
     if (!el) return;
     let frame = 0, last = performance.now(), carry = 0;
-    const pxPerSecond = 24 * speed;
+    const pxPerSecond = 30 * speed;
     const tick = (now: number) => {
       const dt = (now - last) / 1000;
       last = now;
       carry += pxPerSecond * dt;
       const step = Math.floor(carry);
       if (step > 0) { el.scrollTop += step; carry -= step; }
-      if (el.scrollTop + el.clientHeight >= el.scrollHeight - 1) { setScrolling(false); return; }
+      if (el.scrollTop + el.clientHeight >= el.scrollHeight - 2) { setScrolling(false); return; }
       frame = requestAnimationFrame(tick);
     };
     frame = requestAnimationFrame(tick);
@@ -493,7 +491,7 @@ export default function App() {
     <div style={{ minHeight: '100dvh', fontFamily: "'Lexend', sans-serif", backgroundColor: t.bg, color: t.text, transition: 'background 0.25s ease, color 0.25s ease', display: 'flex', flexDirection: 'column' }}>
       <style>{`
         * { box-sizing: border-box; }
-        html, body { margin: 0; padding: 0; min-height: 100%; }
+        html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; }
         @keyframes animFadeOut { 0% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(1.03); } }
         .cn-scroll { scrollbar-width: none; -ms-overflow-style: none; }
         .cn-scroll::-webkit-scrollbar { display: none; }
@@ -502,7 +500,7 @@ export default function App() {
 
         @media print {
           @page { size: A4 portrait; margin: 12mm 14mm; }
-          body, html { background: #ffffff !important; color: #000000 !important; font-family: 'Lexend', sans-serif !important; }
+          body, html { background: #ffffff !important; color: #000000 !important; font-family: 'Lexend', sans-serif !important; height: auto !important; overflow: auto !important; }
           .no-imprimir { display: none !important; }
           .contenedor-visor { max-width: 100% !important; height: auto !important; padding: 0 !important; margin: 0 !important; }
           
@@ -665,7 +663,6 @@ export default function App() {
             </header>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              {/* Opciones de la tuerca requeridas */}
               <div style={{ background: t.surface, border: `1px solid ${t.border}`, borderRadius: 16, padding: '16px', display: 'flex', flexDirection: 'column', gap: 14, boxShadow: t.shadow }}>
                 <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: t.accent }}>Tamaño de Letra y Acordes</h3>
                 
@@ -754,7 +751,7 @@ export default function App() {
       {vistaActual === 'visor' && himnoActivo && (
         <div style={{ flex: 1, width: '100%', display: 'flex', flexDirection: 'column', height: '100dvh', overflow: 'hidden' }}>
           
-          <header className="no-imprimir" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', background: t.surface, borderBottom: `1px solid ${t.border}` }}>
+          <header className="no-imprimir" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', background: t.surface, borderBottom: `1px solid ${t.border}`, flexShrink: 0 }}>
             <button type="button" className="cn-press" onClick={navegarAtras} style={{ width: 36, height: 36, borderRadius: 999, border: `1px solid ${t.border}`, background: t.surface2, color: t.text, display: 'grid', placeItems: 'center' }}>
               <Icon name="arrow-left" size={18} />
             </button>
@@ -774,8 +771,8 @@ export default function App() {
             </div>
           </header>
 
-          <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 100px 20px', display: 'flex', justifyContent: 'center' }} ref={scrollRef}>
-            <div className="contenedor-visor" style={{ width: '100%', maxWidth: 720, display: 'flex', flexDirection: 'column', gap: 20 }}>
+          <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 120px 20px', display: 'block' }} ref={scrollRef}>
+            <div style={{ maxWidth: 720, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 20 }} className="contenedor-visor">
               
               <div className="header-himno-pdf">
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
@@ -817,7 +814,7 @@ export default function App() {
           </div>
 
           {/* Barra flotante estilo píldora para Auto-scroll */}
-          <div className="no-imprimir" style={{ position: 'fixed', bottom: 16, left: '50%', transform: 'translateX(-50%)', background: 'rgba(15, 23, 42, 0.9)', backdropFilter: 'blur(8px)', borderRadius: 999, padding: '8px 14px', display: 'flex', alignItems: 'center', gap: 10, zIndex: 100, boxShadow: '0 10px 25px rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.1)' }}>
+          <div className="no-imprimir" style={{ position: 'fixed', bottom: 16, left: '50%', transform: 'translateX(-50%)', background: 'rgba(15, 23, 42, 0.92)', backdropFilter: 'blur(8px)', borderRadius: 999, padding: '8px 14px', display: 'flex', alignItems: 'center', gap: 10, zIndex: 100, boxShadow: '0 10px 25px rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.1)' }}>
             <button type="button" className="cn-press" onClick={() => setScrolling(!scrolling)} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 14px', borderRadius: 999, background: scrolling ? colorAcordes : 'rgba(255,255,255,0.15)', color: '#fff', fontWeight: 700, fontSize: 13 }}>
               <Icon name={scrolling ? 'pause' : 'play'} size={14} /> Auto-scroll
             </button>
