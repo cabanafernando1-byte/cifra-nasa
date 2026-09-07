@@ -161,11 +161,10 @@ function RenderLineaChordPro({ linea, tema, fontSizeAcordes, fontSizeLetra, colo
     return <div style={{ marginTop: '20px', marginBottom: '6px', fontWeight: '800', fontSize: '0.8em', color: tema.muted, letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: "'Lexend', sans-serif" }}>{lineaTrim}</div>;
   }
 
-  // Segment exact tokens of [acorde] and text chunks without any auto-transposition or modification
+  // Render exact literal text and bracketed chords without any transposition or translation
   const tokens: { acorde: string | null; texto: string }[] = [];
   const regex = /\[([^\]]+)\]([^[]*)/g;
   let match;
-  let lastIndex = 0;
 
   const firstBracket = linea.indexOf('[');
   if (firstBracket > 0) {
