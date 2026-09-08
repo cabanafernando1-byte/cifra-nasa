@@ -103,7 +103,6 @@ function calcularDiagramaAcorde(nombreAcorde: string) {
     "C#7M": { baseFret: 4, barre: { fret: 4, from: 0, to: 4 }, frets: [4, 6, 5, 6, 4, -1] },
     "E/G#": { frets: [4, -1, 2, 4, 5, -1] },
     "B9": { frets: [-1, 2, 1, 2, 2, -1] },
-    "A": { frets: [-1, 0, 2, 2, 2, 0] }
   };
   return basicos[limpio] || { frets: [-1, -1, 0, 2, 3, 2] };
 }
@@ -160,10 +159,10 @@ function RenderLineaChordPro({ linea, tema, fontSizeAcordes, fontSizeLetra, colo
   if (!lineaTrim) return <div style={{ height: '14px' }} />;
   const esSeccion = /^(ESTROFA|CORO|PUENTE|INTRO|CODA|INTRODUCCIÓN|VERSO)/i.test(lineaTrim);
   if (esSeccion) {
-    return <div style={{ marginTop: '20px', marginBottom: '6px', fontWeight: '800', fontSize: '0.8em', color: tema.muted, letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: "'Lexend', sans-serif" }}>{lineaTrim}</div>;
+    return <div style={{ marginTop: '24px', marginBottom: '8px', fontWeight: '800', fontSize: '0.85em', color: tema.muted, letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: "'Lexend', sans-serif" }}>{lineaTrim}</div>;
   }
 
-  // Parse into clean continuous chunks so letters flow naturally as a single string
+  // Parse into clean pairs of [chord, text] keeping them strictly bound inline without block breaking
   const regex = /\[([^\]]+)\]([^[]*)/g;
   let matches: { acorde: string; texto: string }[] = [];
   let match;
@@ -175,7 +174,7 @@ function RenderLineaChordPro({ linea, tema, fontSizeAcordes, fontSizeLetra, colo
     leadingText = linea.slice(0, firstBracket);
     lastIndex = firstBracket;
   } else if (firstBracket === -1) {
-    return <div style={{ fontSize: `${fontSizeLetra}px`, lineHeight: '1.5', color: tema.text, fontFamily: "'Lexend', sans-serif", margin: '2px 0', whiteSpace: 'pre' }}>{linea}</div>;
+    return <div style={{ fontSize: `${fontSizeLetra}px`, lineHeight: '1.6', color: tema.text, fontFamily: "'Lexend', sans-serif", margin: '6px 0', whiteSpace: 'pre' }}>{linea}</div>;
   }
 
   while ((match = regex.exec(linea)) !== null) {
@@ -186,24 +185,24 @@ function RenderLineaChordPro({ linea, tema, fontSizeAcordes, fontSizeLetra, colo
   const trailingText = lastIndex < linea.length ? linea.slice(lastIndex) : '';
 
   return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', margin: '6px 0 2px 0', rowGap: '2px' }}>
+    <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', margin: '14px 0 6px 0', rowGap: '6px' }}>
       {leadingText && (
-        <span style={{ display: 'inline-block', position: 'relative', whiteSpace: 'pre', fontSize: `${fontSizeLetra}px`, color: tema.text, lineHeight: '1.25', fontFamily: "'Lexend', sans-serif" }}>
+        <span style={{ fontSize: `${fontSizeLetra}px`, lineHeight: '1.4', color: tema.text, fontFamily: "'Lexend', sans-serif", whiteSpace: 'pre', alignSelf: 'flex-end' }}>
           {leadingText}
         </span>
       )}
       {matches.map((m, idx) => (
-        <span key={idx} style={{ display: 'inline-flex', flexDirection: 'column', position: 'relative', verticalAlign: 'bottom' }}>
-          <span style={{ position: 'absolute', bottom: '100%vh', left: 0, fontSize: `${fontSizeAcordes}px`, fontWeight: '800', color: colorAcordes, lineHeight: '1.2', fontFamily: "'Lexend', sans-serif", whiteSpace: 'nowrap', marginBottom: '2px' }}>
+        <span key={idx} style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'flex-start', verticalAlign: 'bottom', margin: '0 1px' }}>
+          <span style={{ fontSize: `${fontSizeAcordes}px`, fontWeight: '800', color: colorAcordes, lineHeight: '1.2', fontFamily: "'Lexend', sans-serif", whiteSpace: 'pre', marginBottom: '2px' }}>
             {m.acorde}
           </span>
-          <span style={{ display: 'inline-block', fontSize: `${fontSizeLetra}px`, lineHeight: '1.25', color: tema.text, fontFamily: "'Lexend', sans-serif", whiteSpace: 'pre' }}>
-            {m.texto}
+          <span style={{ fontSize: `${fontSizeLetra}px`, lineHeight: '1.4', color: tema.text, fontFamily: "'Lexend', sans-serif", whiteSpace: 'pre' }}>
+            {m.texto || '\u00A0'}
           </span>
         </span>
       ))}
       {trailingText && (
-        <span style={{ display: 'inline-block', position: 'relative', whiteSpace: 'pre', fontSize: `${fontSizeLetra}px`, color: tema.text, lineHeight: '1.25', fontFamily: "'Lexend', sans-serif" }}>
+        <span style={{ fontSize: `${fontSizeLetra}px`, lineHeight: '1.4', color: tema.text, fontFamily: "'Lexend', sans-serif", whiteSpace: 'pre', alignSelf: 'flex-end' }}>
           {trailingText}
         </span>
       )}
