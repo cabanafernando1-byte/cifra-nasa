@@ -103,7 +103,6 @@ function calcularDiagramaAcorde(nombreAcorde: string) {
     "C#7M": { baseFret: 4, barre: { fret: 4, from: 0, to: 4 }, frets: [4, 6, 5, 6, 4, -1] },
     "E/G#": { frets: [4, -1, 2, 4, 5, -1] },
     "B9": { frets: [-1, 2, 1, 2, 2, -1] },
-    "A": { frets: [-1, 0, 2, 2, 2, 0] }
   };
   return basicos[limpio] || { frets: [-1, -1, 0, 2, 3, 2] };
 }
@@ -163,21 +162,18 @@ function RenderLineaChordPro({ linea, tema, fontSizeAcordes, fontSizeLetra, colo
     return <div style={{ marginTop: '20px', marginBottom: '6px', fontWeight: '800', fontSize: '0.8em', color: tema.muted, letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: "'Lexend', sans-serif" }}>{lineaTrim}</div>;
   }
 
-  // Segment exact tokens of [acorde] and text chunks. 
-  // Each pair [acorde]texto is rendered as an inline-flex column so the chord stays right above its precise text position.
+  // Parse line into pairs of [chord, text] keeping exact literal string and positions
   const regex = /\[([^\]]+)\]([^[]*)/g;
   let matches: { acorde: string; texto: string }[] = [];
   let match;
   let lastIndex = 0;
 
-  // Check leading text before the first bracket
   const firstBracket = linea.indexOf('[');
   let leadingText = '';
   if (firstBracket > 0) {
     leadingText = linea.slice(0, firstBracket);
     lastIndex = firstBracket;
   } else if (firstBracket === -1) {
-    // No chords on this line, just plain text
     return <div style={{ fontSize: `${fontSizeLetra}px`, lineHeight: '1.5', color: tema.text, fontFamily: "'Lexend', sans-serif", margin: '2px 0' }}>{linea}</div>;
   }
 
@@ -186,19 +182,18 @@ function RenderLineaChordPro({ linea, tema, fontSizeAcordes, fontSizeLetra, colo
     lastIndex = regex.lastIndex;
   }
 
-  // Trailing text after last match
   const trailingText = lastIndex < linea.length ? linea.slice(lastIndex) : '';
 
   return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', minHeight: `${fontSizeAcordes + fontSizeLetra + 6}px`, margin: '4px 0', rowGap: '2px' }}>
+    <div style={{ display: 'flex', flexWrap: 'nowrap', alignItems: 'flex-end', minHeight: `${fontSizeAcordes + fontSizeLetra + 4}px`, margin: '4px 0', overflowX: 'auto' }}>
       {leadingText && (
-        <span style={{ display: 'inline-flex', flexDirection: 'column', verticalAlign: 'bottom' }}>
+        <span style={{ display: 'inline-flex', flexDirection: 'column', verticalAlign: 'bottom', flexShrink: 0 }}>
           <span style={{ fontSize: `${fontSizeAcordes}px`, lineHeight: '1.2', visibility: 'hidden', fontFamily: "'Lexend', sans-serif" }}>.</span>
           <span style={{ fontSize: `${fontSizeLetra}px`, lineHeight: '1.25', color: tema.text, fontFamily: "'Lexend', sans-serif", whiteSpace: 'pre' }}>{leadingText}</span>
         </span>
       )}
       {matches.map((m, idx) => (
-        <span key={idx} style={{ display: 'inline-flex', flexDirection: 'column', verticalAlign: 'bottom' }}>
+        <span key={idx} style={{ display: 'inline-flex', flexDirection: 'column', verticalAlign: 'bottom', flexShrink: 0 }}>
           <span style={{ fontSize: `${fontSizeAcordes}px`, fontWeight: '800', color: colorAcordes, lineHeight: '1.2', fontFamily: "'Lexend', sans-serif", whiteSpace: 'pre' }}>
             {m.acorde}
           </span>
@@ -208,7 +203,7 @@ function RenderLineaChordPro({ linea, tema, fontSizeAcordes, fontSizeLetra, colo
         </span>
       ))}
       {trailingText && (
-        <span style={{ display: 'inline-flex', flexDirection: 'column', verticalAlign: 'bottom' }}>
+        <span style={{ display: 'inline-flex', flexDirection: 'column', verticalAlign: 'bottom', flexShrink: 0 }}>
           <span style={{ fontSize: `${fontSizeAcordes}px`, lineHeight: '1.2', visibility: 'hidden', fontFamily: "'Lexend', sans-serif" }}>.</span>
           <span style={{ fontSize: `${fontSizeLetra}px`, lineHeight: '1.25', color: tema.text, fontFamily: "'Lexend', sans-serif", whiteSpace: 'pre' }}>{trailingText}</span>
         </span>
