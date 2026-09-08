@@ -103,6 +103,7 @@ function calcularDiagramaAcorde(nombreAcorde: string) {
     "C#7M": { baseFret: 4, barre: { fret: 4, from: 0, to: 4 }, frets: [4, 6, 5, 6, 4, -1] },
     "E/G#": { frets: [4, -1, 2, 4, 5, -1] },
     "B9": { frets: [-1, 2, 1, 2, 2, -1] },
+    "A": { frets: [-1, 0, 2, 2, 2, 0] }
   };
   return basicos[limpio] || { frets: [-1, -1, 0, 2, 3, 2] };
 }
@@ -162,7 +163,7 @@ function RenderLineaChordPro({ linea, tema, fontSizeAcordes, fontSizeLetra, colo
     return <div style={{ marginTop: '20px', marginBottom: '6px', fontWeight: '800', fontSize: '0.8em', color: tema.muted, letterSpacing: '0.12em', textTransform: 'uppercase', fontFamily: "'Lexend', sans-serif" }}>{lineaTrim}</div>;
   }
 
-  // Parse line into pairs of [chord, text] keeping exact literal string and positions
+  // Parse into clean continuous chunks so letters flow naturally as a single string
   const regex = /\[([^\]]+)\]([^[]*)/g;
   let matches: { acorde: string; texto: string }[] = [];
   let match;
@@ -174,7 +175,7 @@ function RenderLineaChordPro({ linea, tema, fontSizeAcordes, fontSizeLetra, colo
     leadingText = linea.slice(0, firstBracket);
     lastIndex = firstBracket;
   } else if (firstBracket === -1) {
-    return <div style={{ fontSize: `${fontSizeLetra}px`, lineHeight: '1.5', color: tema.text, fontFamily: "'Lexend', sans-serif", margin: '2px 0' }}>{linea}</div>;
+    return <div style={{ fontSize: `${fontSizeLetra}px`, lineHeight: '1.5', color: tema.text, fontFamily: "'Lexend', sans-serif", margin: '2px 0', whiteSpace: 'pre' }}>{linea}</div>;
   }
 
   while ((match = regex.exec(linea)) !== null) {
@@ -185,27 +186,25 @@ function RenderLineaChordPro({ linea, tema, fontSizeAcordes, fontSizeLetra, colo
   const trailingText = lastIndex < linea.length ? linea.slice(lastIndex) : '';
 
   return (
-    <div style={{ display: 'flex', flexWrap: 'nowrap', alignItems: 'flex-end', minHeight: `${fontSizeAcordes + fontSizeLetra + 4}px`, margin: '4px 0', overflowX: 'auto' }}>
+    <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', margin: '6px 0 2px 0', rowGap: '2px' }}>
       {leadingText && (
-        <span style={{ display: 'inline-flex', flexDirection: 'column', verticalAlign: 'bottom', flexShrink: 0 }}>
-          <span style={{ fontSize: `${fontSizeAcordes}px`, lineHeight: '1.2', visibility: 'hidden', fontFamily: "'Lexend', sans-serif" }}>.</span>
-          <span style={{ fontSize: `${fontSizeLetra}px`, lineHeight: '1.25', color: tema.text, fontFamily: "'Lexend', sans-serif", whiteSpace: 'pre' }}>{leadingText}</span>
+        <span style={{ display: 'inline-block', position: 'relative', whiteSpace: 'pre', fontSize: `${fontSizeLetra}px`, color: tema.text, lineHeight: '1.25', fontFamily: "'Lexend', sans-serif" }}>
+          {leadingText}
         </span>
       )}
       {matches.map((m, idx) => (
-        <span key={idx} style={{ display: 'inline-flex', flexDirection: 'column', verticalAlign: 'bottom', flexShrink: 0 }}>
-          <span style={{ fontSize: `${fontSizeAcordes}px`, fontWeight: '800', color: colorAcordes, lineHeight: '1.2', fontFamily: "'Lexend', sans-serif", whiteSpace: 'pre' }}>
+        <span key={idx} style={{ display: 'inline-flex', flexDirection: 'column', position: 'relative', verticalAlign: 'bottom' }}>
+          <span style={{ position: 'absolute', bottom: '100%vh', left: 0, fontSize: `${fontSizeAcordes}px`, fontWeight: '800', color: colorAcordes, lineHeight: '1.2', fontFamily: "'Lexend', sans-serif", whiteSpace: 'nowrap', marginBottom: '2px' }}>
             {m.acorde}
           </span>
-          <span style={{ fontSize: `${fontSizeLetra}px`, lineHeight: '1.25', color: tema.text, fontFamily: "'Lexend', sans-serif", whiteSpace: 'pre' }}>
-            {m.texto || '\u00A0'}
+          <span style={{ display: 'inline-block', fontSize: `${fontSizeLetra}px`, lineHeight: '1.25', color: tema.text, fontFamily: "'Lexend', sans-serif", whiteSpace: 'pre' }}>
+            {m.texto}
           </span>
         </span>
       ))}
       {trailingText && (
-        <span style={{ display: 'inline-flex', flexDirection: 'column', verticalAlign: 'bottom', flexShrink: 0 }}>
-          <span style={{ fontSize: `${fontSizeAcordes}px`, lineHeight: '1.2', visibility: 'hidden', fontFamily: "'Lexend', sans-serif" }}>.</span>
-          <span style={{ fontSize: `${fontSizeLetra}px`, lineHeight: '1.25', color: tema.text, fontFamily: "'Lexend', sans-serif", whiteSpace: 'pre' }}>{trailingText}</span>
+        <span style={{ display: 'inline-block', position: 'relative', whiteSpace: 'pre', fontSize: `${fontSizeLetra}px`, color: tema.text, lineHeight: '1.25', fontFamily: "'Lexend', sans-serif" }}>
+          {trailingText}
         </span>
       )}
     </div>
@@ -781,7 +780,7 @@ export default function App() {
                   ))}
                 </div>
 
-                <div className="area-partitura" style={{ display: 'flex', flexDirection: 'column', gap: 6, color: t.text }}>
+                <div className="area-partitura" style={{ display: 'flex', flexDirection: 'column', gap: 12, color: t.text }}>
                   {himnoActivo.textoChordPro ? himnoActivo.textoChordPro.split('\n').map((linea: string, lIdx: number) => (
                     <RenderLineaChordPro key={lIdx} linea={linea} tema={t} fontSizeAcordes={fontSizeAcordes} fontSizeLetra={fontSizeLetra} colorAcordes={colorAcordes} />
                   )) : <p style={{ color: t.muted }}>Sin contenido</p>}
